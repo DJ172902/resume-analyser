@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groq Resume AI</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; padding: 50px; }
+        .container { background: #1e293b; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); width: 100%; max-width: 500px; }
+        h1 { font-size: 1.5rem; margin-bottom: 1rem; color: #38bdf8; }
+        input[type="file"] { margin: 20px 0; display: block; width: 100%; color: #94a3b8; }
+        button { background: #38bdf8; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; }
+        button:hover { background: #7dd3fc; }
+        #result { margin-top: 20px; background: #334155; padding: 15px; border-radius: 8px; font-size: 0.9rem; line-height: 1.5; white-space: pre-wrap; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚡ Groq Resume Analyser</h1>
+        <p>Upload PDF/Docx for instant AI feedback.</p>
+        <input type="file" id="resumeFile" accept=".pdf,.docx">
+        <button id="uploadBtn" onclick="sendToAI()">Analyse Resume</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function sendToAI() {
+            const fileInput = document.getElementById('resumeFile');
+            const resultDiv = document.getElementById('result');
+            const btn = document.getElementById('uploadBtn');
+            
+            if (!fileInput.files[0]) return alert("Please select a file first!");
+
+            // UI Feedback
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+            resultDiv.style.display = "block";
+            resultDiv.innerText = "Groq is thinking...";
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                resultDiv.innerText = data.analysis;
+            } catch (error) {
+                resultDiv.innerText = "Error: Backend not responding.";
+            } finally {
+                btn.innerText = "Analyse Resume";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
