@@ -5,6 +5,8 @@ from groq import Groq
 import os
 import tempfile
 
+#python -m uvicorn main:app --reload
+
 app = FastAPI()
 
 # Allow your HTML file to talk to this Python server
@@ -19,7 +21,6 @@ client = Groq(api_key="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"
 
 @app.post("/analyze")
 async def analyze_resume(file: UploadFile = File(...)):
-    # Save uploaded file temporarily
     suffix = os.path.splitext(file.filename)[1]
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         tmp.write(await file.read())
